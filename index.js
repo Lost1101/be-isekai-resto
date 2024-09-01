@@ -192,7 +192,6 @@ app.delete('/user/:id', async (req, res) => {
 
 app.get('/profile', authenticateToken, async (req, res) => {
   try {
-    console.log(req.user);
       const user = await prisma.user.findUnique({
           where: { id: req.user.userId }
       });
@@ -337,7 +336,7 @@ app.get('/payment', async(req, res) =>{
   try {
     const payments = await prisma.payment.findMany({
       include: {
-        items: true, // Menyertakan daftar order_item terkait
+        items: true,
       },
     });
     res.json(payments);
