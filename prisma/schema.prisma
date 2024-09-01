@@ -1,0 +1,75 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model user {
+  id   Int    @id @default(autoincrement())
+  username  String
+  name      String
+  password  String
+  role	    String
+}
+
+model tables {
+  id  Int     @id @default(autoincrement())
+  status    Boolean
+}
+
+model menu {
+  id   Int     @id @default(autoincrement())
+  name      String
+  price     Int
+  time      Int
+  stock     Int
+  img	    String @db.Text
+  category String
+}
+
+model order_item {
+  id   Int    @id @default(autoincrement())
+  id_payment Int
+  id_menu    Int
+  id_table   Int
+  customer   String
+  name       String
+  price      Float
+  pcs        Int
+  status     Boolean
+  waiter     String
+  payment    payment @relation(fields: [id_payment], references: [id])
+
+  @@index([id_menu])
+}
+
+model payment {
+  id Int    @id @default(autoincrement())
+  created    DateTime? @default(now())
+  customer   String
+  id_table   Int
+  payment    Float
+  total_cash Float?
+  change     Float?
+  status     Boolean
+  waiter     String
+  status_ord Boolean
+  items      order_item[]
+  queue      queue?
+
+  @@index([status, id_table])
+}
+
+model queue {
+  id         Int     @id @default(autoincrement())
+  id_payment Int     @unique
+  customer   String
+  id_table   Int
+  status     Boolean
+  payment    payment @relation(fields: [id_payment], references: [id])
+
+  @@index([id_payment, id_table])
+}
